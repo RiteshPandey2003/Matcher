@@ -1,12 +1,10 @@
 package com.Image.Matcher.Controller;
 
 import com.Image.Matcher.DTO.ChatRequest;
+import com.Image.Matcher.DTO.ChatResponse;
 import com.Image.Matcher.Service.ChatService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/chat")
@@ -19,8 +17,20 @@ public class ChatController {
     }
 
     @PostMapping
-    public String chat(@RequestBody ChatRequest request) {
+    public ResponseEntity<ChatResponse> chat(@RequestBody ChatRequest request) {
 
-        return chatService.askQuestion(request);
+        ChatResponse response = chatService.askQuestion(request);
+
+        if (response.isSuccess()) {
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
+
+    // Health check endpoint
+    @GetMapping("/health")
+    public ResponseEntity<String> health() {
+        return ResponseEntity.ok("AI Chat Service is running ✅");
     }
 }

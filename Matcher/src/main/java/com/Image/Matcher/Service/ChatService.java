@@ -1,13 +1,16 @@
 package com.Image.Matcher.Service;
 
 import com.Image.Matcher.DTO.ChatRequest;
+import com.Image.Matcher.DTO.ChatResponse;
 import dev.langchain4j.model.openaiofficial.OpenAiOfficialChatModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-
 
 @Service
 public class ChatService {
+
+    private static final Logger log = LoggerFactory.getLogger(ChatService.class);
 
     private final OpenAiOfficialChatModel chatModel;
 
@@ -15,14 +18,22 @@ public class ChatService {
         this.chatModel = chatModel;
     }
 
-    public String askQuestion(ChatRequest request) {
+    public ChatResponse askQuestion(ChatRequest request) {
 
-        System.out.println("Incoming Prompt: " + request.getPrompt());
+        if (request.getPrompt() == null || request.getPrompt().isBlank()) {
+            return ChatResponse.error("Prompt cannot be empty");
+        }
 
-        String answer = chatModel.chat(request.getPrompt());
+        log.info("Incoming prompt: {}", request.getPrompt());
 
-        System.out.println("AI Response: " + answer);
+        try {
+            String answer = chatModel.chat(request.getPrompt());
+            log.info("AI response received successfully");
+            return ChatResponse.ok(answer);
 
-        return answer;
+        } catch (Exception e) {
+            log.error("Error calling AI model: {}", e.getMessage(), e);
+            return ChatResponse.error("AI call failed: " + e.getMessage());
+        }
     }
 }
