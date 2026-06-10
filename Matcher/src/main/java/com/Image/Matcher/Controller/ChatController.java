@@ -12,12 +12,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/chat")
 public class ChatController {
 
-    @Autowired
-    ChatService chatService;
+    private final ChatService chatService;
+
+    public ChatController(ChatService chatService) {
+        this.chatService = chatService;
+    }
 
     @PostMapping
-    public String Chat(@RequestBody ChatRequest chatRequest){
-        System.out.println(chatRequest);
-        return chatService.askQuestion(chatRequest);
+    public String chat(@RequestBody ChatRequest request) {
+
+        return chatService.askQuestion(request);
     }
 }

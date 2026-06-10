@@ -9,12 +9,8 @@ public class ChatRequest {
     public String getPrompt() {
         return prompt;
     }
+
     public void setPrompt(String prompt) {
         this.prompt = prompt;
-    }
-
-    @Override
-    public String toString(){
-        return prompt;
     }
 }

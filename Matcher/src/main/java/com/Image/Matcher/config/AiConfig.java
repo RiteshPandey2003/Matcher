@@ -1,36 +1,27 @@
 package com.Image.Matcher.config;
 
-import com.google.genai.Client;
-import com.google.genai.types.GenerateContentResponse;
-import org.springframework.beans.factory.annotation.Value;
+
+import dev.langchain4j.model.openaiofficial.OpenAiOfficialChatModel;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Value;
 
 
 @Configuration
 public class AiConfig {
 
-    @Value("${google.api.key}")
+    @Value("${github.api.key}")
     private String apiKey;
 
-    static Client client = new Client();
+    @Bean
+    public OpenAiOfficialChatModel chatModel() {
 
-    public Client geminiClient() {
+        System.out.println("GitHub API Key Loaded Successfully");
 
-        return Client.builder()
+        return OpenAiOfficialChatModel.builder()
+                .baseUrl("https://models.github.ai/inference")
                 .apiKey(apiKey)
+                .modelName("gpt-4.1-nano")
                 .build();
     }
-
-    public static String generate(String prompt) {
-        GenerateContentResponse response =
-                client.models.generateContent(
-                        "gemini-2.5-flash",
-                        "Explain how AI works in a few words",
-                        null);
-
-        System.out.println(response.text());
-        return prompt;
-    }
-
 }
