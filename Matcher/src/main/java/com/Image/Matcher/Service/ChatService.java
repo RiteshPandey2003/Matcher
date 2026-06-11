@@ -14,7 +14,7 @@ public class ChatService {
 
     private final OllamaChatModel chatModel;
 
-    public ChatService(OpenAiOfficialChatModel chatModel) {
+    public ChatService(OllamaChatModel chatModel) {
         this.chatModel = chatModel;
     }
 
@@ -27,7 +27,7 @@ public class ChatService {
         log.info("Incoming prompt: {}", request.getPrompt());
 
         try {
-            String answer = chatModel.chat(request.getPrompt());
+            String answer = chatModel.generate(request.getPrompt());
             log.info("AI response received successfully");
             return ChatResponse.ok(answer);
 
