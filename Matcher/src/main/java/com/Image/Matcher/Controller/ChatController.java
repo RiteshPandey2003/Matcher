@@ -3,6 +3,8 @@ package com.Image.Matcher.Controller;
 import com.Image.Matcher.DTO.ChatRequest;
 import com.Image.Matcher.DTO.ChatResponse;
 import com.Image.Matcher.Service.ChatService;
+import com.Image.Matcher.config.QdrantConfig;
+import io.qdrant.client.QdrantClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,9 +13,11 @@ import org.springframework.web.bind.annotation.*;
 public class ChatController {
 
     private final ChatService chatService;
+    private final QdrantClient qdrantClient;
 
-    public ChatController(ChatService chatService) {
+    public ChatController(ChatService chatService, QdrantClient qdrantClient) {
         this.chatService = chatService;
+        this.qdrantClient = qdrantClient;
     }
 
     @PostMapping
@@ -25,6 +29,17 @@ public class ChatController {
             return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.internalServerError().body(response);
+        }
+    }
+
+    @GetMapping("/qdrant-test")
+    public String test() {
+
+        try {
+            qdrantClient.listCollectionsAsync().get();
+            return "Qdrant Connected Successfully";
+        } catch (Exception e) {
+            return "Qdrant Connection Failed : " + e.getMessage();
         }
     }
 
