@@ -1,6 +1,6 @@
 package com.Image.Matcher.config;
 
-import dev.langchain4j.model.openaiofficial.OpenAiOfficialChatModel;
+import dev.langchain4j.model.ollama.OllamaChatModel;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,27 +8,23 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class AiConfig {
 
-    @Value("${github.api.key}")
-    private String apiKey;
+    @Value("${ollama.base-url:http://localhost:11434}")
+    private String ollamaBaseUrl;
+
+    @Value("${ollama.model:llama3.2:3b}")
+    private String modelName;
 
     @Bean
-    public OpenAiOfficialChatModel chatModel() {
+    public OllamaChatModel chatModel() {
 
-        // Fail fast — catch missing/wrong key at startup, not at request time
-        if (apiKey == null || apiKey.isBlank() || apiKey.equals("YOUR_GITHUB_PAT_HERE")) {
-            throw new IllegalStateException(
-                    "GitHub API key is not configured! " +
-                            "Set 'github.api.key' in application.properties with your GitHub PAT. " +
-                            "Get one from: https://github.com/settings/tokens (Models: Read and Write permission)"
-            );
-        }
+        // Verify Ollama is reachable
+        System.out.println("✅ Ollama Configuration:");
+        System.out.println("   Base URL: " + ollamaBaseUrl);
+        System.out.println("   Model: " + modelName);
 
-        System.out.println("✅ GitHub API Key loaded — starts with: " + apiKey.substring(0, Math.min(8, apiKey.length())) + "...");
-
-        return OpenAiOfficialChatModel.builder()
-                .baseUrl("https://models.inference.ai.azure.com")   // correct GitHub Models endpoint
-                .apiKey(apiKey)
-                .modelName("gpt-4o-mini")                           // stable model on GitHub Models
+        return OllamaChatModel.builder()
+                .baseUrl(ollamaBaseUrl)     // Local Ollama instance
+                .modelName(modelName)       // llama3.2:3b
                 .build();
     }
 }

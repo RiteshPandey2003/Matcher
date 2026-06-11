@@ -2,7 +2,7 @@ package com.Image.Matcher.Service;
 
 import com.Image.Matcher.DTO.ChatRequest;
 import com.Image.Matcher.DTO.ChatResponse;
-import dev.langchain4j.model.openaiofficial.OpenAiOfficialChatModel;
+import dev.langchain4j.model.ollama.OllamaChatModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -12,7 +12,7 @@ public class ChatService {
 
     private static final Logger log = LoggerFactory.getLogger(ChatService.class);
 
-    private final OpenAiOfficialChatModel chatModel;
+    private final OllamaChatModel chatModel;
 
     public ChatService(OpenAiOfficialChatModel chatModel) {
         this.chatModel = chatModel;
